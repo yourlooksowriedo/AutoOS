@@ -1,3 +1,30 @@
+<p align="center">
+  <img src="https://github.com/yourlooksowriedo/AutoOS/blob/01e622177e08992aab7ee1f821a600830fe18276/atlas-solid.png" alt="Banner" width="100%">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/contributors-91-orange.svg">
+  <a href="https://github.com/yourlooksowriedo/AutoOS/releases"><img src="https://img.shields.io/badge/release-v0.1.0--hotfix-blue"></a>
+  <img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4ba3e3.svg">
+</p>
+
+<p align="center">
+  A transparent and lightweight modification to Windows, designed to optimize performance, privacy and usability.
+</p>
+
+<p align="center">
+
+  📞 <a href="https://discord.gg/tPHKkbJaBg">Discord</a> • 
+
+</p>
+
+---
+
+## Important Documentation
+
+
+
+
 ## 🤔 AutoOS คืออะไร?
 
 AtlasOS หรือ Atlas เป็นโครงการโอเพนซอร์สที่ช่วยปรับปรุง Windows ให้ดียิ่งขึ้น โดยเน้นการเพิ่มประสิทธิภาพด้านความเป็นส่วนตัว การใช้งาน และสมรรถนะของระบบอย่างสะดวกง่ายดาย ในขณะเดียวกันก็ยังคงรักษาฟังก์ชันการทำงานหลักและความสามารถในการ [ปรับแต่งตามความต้องการ] เอาไว้
