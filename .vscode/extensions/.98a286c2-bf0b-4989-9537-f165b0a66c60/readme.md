@@ -1,0 +1,80 @@
+![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/DiemasMichiels.emulate)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/DiemasMichiels.emulate)](https://marketplace.visualstudio.com/items?itemName=DiemasMichiels.emulate)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/diemas)
+
+# Android iOS Emulator
+
+A small Visual Studio Code extension to run Android and iOS Simulators in a click.  
+Link to marketplace: https://marketplace.visualstudio.com/items?itemName=DiemasMichiels.emulate
+
+**Running iOS simulators only works on Mac with Xcode!**
+
+## Features
+
+Select and run your emulator from Visual Studio Code.
+
+Open all commands with `Cmd-Shift-P` and type `Emulator` or click the Emulator icon in the top right.
+
+![Image of Emulator](https://raw.githubusercontent.com/DiemasMichiels/emulator/main/images/emulator.gif)
+
+## Requirements
+
+### Android Studio
+
+To run Android emulators you need to have Android studio and already created the Android Virtual Devices.
+
+Add the Android Studio emulator script to your settings of Visual Studio Code:  
+You can either set the default path or specify a specific path for each operating system. The default path will always be the fallback.  
+&nbsp;&nbsp;&nbsp;&nbsp;Default: `"emulator.emulatorPath": "~/Library/Android/sdk/emulator"`  
+&nbsp;&nbsp;&nbsp;&nbsp;Mac: `"emulator.emulatorPathMac": "~/Library/Android/sdk/emulator"`  
+&nbsp;&nbsp;&nbsp;&nbsp;Linux: `"emulator.emulatorPathLinux": "~/Android/Sdk/emulator"`  
+&nbsp;&nbsp;&nbsp;&nbsp;Windows: `"emulator.emulatorPathWindows":`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`"<yourAndroidHome>\\Sdk\\emulator"`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`"C:\Users\<yourUsername>\AppData\Local\Android\Sdk\emulator"`  
+&nbsp;&nbsp;&nbsp;&nbsp;WSL: `"emulator.emulatorPathWSL": "/mnt/c/Users/<yourUsername>/AppData/Local/Android/Sdk/emulator"`
+
+Your visual studio code settings are found here:  
+&nbsp;&nbsp;&nbsp;&nbsp;File -> Preferences -> Setting -> User Setting -> Extensions -> Emulator Configuration
+
+Enable selection for cold boot Android emulators. Activate it in your settings of Visual Studio Code:  
+&nbsp;&nbsp;&nbsp;&nbsp;Android Cold Boot: `true`
+
+WSL has some limitations with the Android emulator and because of that some devices might not work. It will throw an ARM error even if the device is x86.
+
+### Xcode
+
+To run iOS simulators Xcode is required. The extension starts the selected simulator and opens Device Hub with that device selected.
+
+On older Xcode versions that use `Simulator.app`, you can set its path as a fallback:
+`"emulator.simulatorPath": "/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app"`
+
+### Windows guide
+
+Check out the [windows.md](https://github.com/DiemasMichiels/emulator/blob/main/WINDOWS.md) file for the Windows guide with pictures.
+
+## License
+
+MIT License
+
+Copyright (c) 2019 Diemas Michiels
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

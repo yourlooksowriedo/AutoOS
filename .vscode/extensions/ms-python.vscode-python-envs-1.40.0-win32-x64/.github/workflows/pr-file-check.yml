@@ -1,0 +1,76 @@
+name: PR files
+
+on:
+  pull_request:
+    types:
+      - 'opened'
+      - 'reopened'
+      - 'synchronize'
+      - 'labeled'
+      - 'unlabeled'
+
+permissions: {}
+
+jobs:
+  changed-files-in-pr:
+    name: 'Check for changed files'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'package-lock.json matches package.json'
+        uses: brettcannon/check-for-changed-files@d85c64d17b3c1d0ac57c9cc46ea39399b0d6fa71 # v1.2.2
+        with:
+          prereq-pattern: 'package.json'
+          file-pattern: 'package-lock.json'
+          skip-label: 'skip package*.json'
+          failure-message: '${prereq-pattern} was edited but ${file-pattern} was not (the ${skip-label} label can be used to pass this check)'
+
+      - name: 'package.json matches package-lock.json'
+        uses: brettcannon/check-for-changed-files@d85c64d17b3c1d0ac57c9cc46ea39399b0d6fa71 # v1.2.2
+        with:
+          prereq-pattern: 'package-lock.json'
+          file-pattern: 'package.json'
+          skip-label: 'skip package*.json'
+          failure-message: '${prereq-pattern} was edited but ${file-pattern} was not (the ${skip-label} label can be used to pass this check)'
+
+      - name: 'Tests'
+        uses: brettcannon/check-for-changed-files@d85c64d17b3c1d0ac57c9cc46ea39399b0d6fa71 # v1.2.2
+        with:
+          prereq-pattern: src/**/*.ts
+          file-pattern: |
+            src/**/*.test.ts
+            src/**/*.unit.test.ts
+          skip-label: 'skip tests'
+          failure-message: 'TypeScript code was edited without also editing a test file (the ${skip-label} label can be used to pass this check)'
+
+      - name: 'Public API changes require a version bump'
+        uses: brettcannon/check-for-changed-files@d85c64d17b3c1d0ac57c9cc46ea39399b0d6fa71 # v1.2.2
+        with:
+          prereq-pattern: |
+            src/api.ts
+            src/types.ts
+            src/publicErrors.ts
+          file-pattern: 'api/package.json'
+          skip-label: 'skip api version'
+          failure-message: 'The public API (${prereq-pattern}) was changed without bumping the package version in ${file-pattern} (the ${skip-label} label can be used to pass this check)'
+
+      - name: 'Public API changes require a changelog entry'
+        uses: brettcannon/check-for-changed-files@d85c64d17b3c1d0ac57c9cc46ea39399b0d6fa71 # v1.2.2
+        with:
+          prereq-pattern: |
+            src/api.ts
+            src/types.ts
+            src/publicErrors.ts
+          file-pattern: 'api/CHANGELOG.md'
+          skip-label: 'skip api changelog'
+          failure-message: 'The public API (${prereq-pattern}) was changed without a changelog entry in ${file-pattern} (the ${skip-label} label can be used to pass this check)'
+
+      - name: 'Public API changes require documentation updates'
+        uses: brettcannon/check-for-changed-files@d85c64d17b3c1d0ac57c9cc46ea39399b0d6fa71 # v1.2.2
+        with:
+          prereq-pattern: |
+            src/api.ts
+            src/types.ts
+            src/publicErrors.ts
+          file-pattern: 'docs/README.md'
+          skip-label: 'skip api docs'
+          failure-message: 'The public API (${prereq-pattern}) was changed without updating ${file-pattern} (the ${skip-label} label can be used to pass this check)'

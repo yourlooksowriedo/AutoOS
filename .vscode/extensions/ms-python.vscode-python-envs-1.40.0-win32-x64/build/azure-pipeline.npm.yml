@@ -1,0 +1,128 @@
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+trigger: none
+pr: none
+
+resources:
+  repositories:
+    - repository: MicroBuildTemplate
+      type: git
+      name: 1ESPipelineTemplates/MicroBuildTemplate
+      ref: refs/tags/release
+    - repository: templates
+      type: git
+      name: DevDiv/Pylance-Eng
+      ref: refs/heads/main
+
+parameters:
+  - name: quality
+    displayName: 📦 Release Quality
+    type: string
+    default: stable
+    values:
+      - stable
+      - preview
+
+  - name: publishPackage
+    displayName: 🚀 Publish npm
+    type: boolean
+    default: false
+
+variables:
+  - name: TeamName
+    value: vscode-python-environments
+  - name: PackageName
+    value: '@vscode/python-environments'
+  - name: PackageDir
+    value: api
+  - name: NodeVersion
+    value: '22.21.1'
+  - name: AZURE_ARTIFACTS_FEED
+    value: 'https://devdiv.pkgs.visualstudio.com/DevDiv/_packaging/Pylance_PublicPackages/npm/registry/'
+  - name: npmTag
+    ${{ if eq(parameters.quality, 'preview') }}:
+      value: next
+    ${{ else }}:
+      value: latest
+
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Official.Publish.yml@MicroBuildTemplate
+  parameters:
+    sdl:
+      sourceAnalysisPool: VSEng-MicroBuildVSStable
+      codeSignValidation:
+        enabled: true
+      sbom:
+        enabled: true
+    pool:
+      name: AzurePipelines-EO
+      image: 1ESPT-Ubuntu22.04
+      os: linux
+
+    customBuildTags:
+      - ES365AIMigrationTooling
+
+    stages:
+      - stage: Build
+        displayName: Build & Pack
+        jobs:
+          - job: BuildPackage
+            displayName: Build npm package
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: npm-package
+            steps:
+              - template: azure-pipelines/extension/templates/steps/setup.yml@templates
+                parameters:
+                  installPython: false
+                  customNPMRegistry: $(AZURE_ARTIFACTS_FEED)
+                  nodeVersion: $(NodeVersion)
+
+              - script: npm install
+                workingDirectory: $(Build.SourcesDirectory)/api
+                displayName: Install package dependencies
+
+              - script: npm run copy:sources
+                workingDirectory: $(Build.SourcesDirectory)/api
+                displayName: Copy src/api.ts, src/types.ts, src/publicErrors.ts to API package sources
+
+              - script: npm run compile
+                workingDirectory: $(Build.SourcesDirectory)/api
+                displayName: Compile TypeScript
+
+              - script: npm run test:package
+                workingDirectory: $(Build.SourcesDirectory)/api
+                displayName: Pack and validate npm package
+
+              - task: CopyFiles@2
+                displayName: Copy package tarball to staging
+                inputs:
+                  sourceFolder: $(Build.SourcesDirectory)/api
+                  contents: '*.tgz'
+                  targetFolder: $(Build.ArtifactStagingDirectory)
+
+      - stage: PublishNPM
+        displayName: Publish to NPM
+        dependsOn: Build
+        condition: and(succeeded(), eq('${{ parameters.publishPackage }}', 'true'))
+        jobs:
+          - job: PublishPackage
+            displayName: Publish npm package
+            templateContext:
+              isReleaseJob: true
+            steps:
+              - download: current
+                artifact: npm-package
+                displayName: Download npm-package artifact
+
+              - template: MicroBuild.Publish.yml@MicroBuildTemplate
+                parameters:
+                  intent: 'PackageDistribution'
+                  contentType: 'npm'
+                  contentSource: 'Folder'
+                  folderLocation: '$(Pipeline.Workspace)/npm-package'
+                  waitForReleaseCompletion: true
+                  owners: 'brcan@microsoft.com'
+                  approvers: 'eduardovil@microsoft.com'

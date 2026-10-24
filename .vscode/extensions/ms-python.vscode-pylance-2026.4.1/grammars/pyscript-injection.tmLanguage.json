@@ -1,0 +1,39 @@
+{
+    "scopeName": "text.html.pyscript-injection",
+    "injectionSelector": "L:text.html -comment",
+    "patterns": [{ "include": "#py-script-tag" }, { "include": "#py-type-script-tag" }],
+    "repository": {
+        "py-script-tag": {
+            "begin": "(<)(py-script)\\b[^>]*(>)",
+            "end": "(</)(py-script)\\s*(>)",
+            "beginCaptures": {
+                "1": { "name": "punctuation.definition.tag.begin.html" },
+                "2": { "name": "entity.name.tag.html" },
+                "3": { "name": "punctuation.definition.tag.end.html" }
+            },
+            "endCaptures": {
+                "1": { "name": "punctuation.definition.tag.begin.html" },
+                "2": { "name": "entity.name.tag.html" },
+                "3": { "name": "punctuation.definition.tag.end.html" }
+            },
+            "contentName": "meta.embedded.block.python",
+            "patterns": [{ "include": "source.python" }]
+        },
+        "py-type-script-tag": {
+            "begin": "(<)(script)\\b(?=[^>]*type\\s*=\\s*[\"'](?:py|mpy|text/python3?)[\"'])[^>]*(>)",
+            "end": "(</)(script)\\s*(>)",
+            "beginCaptures": {
+                "1": { "name": "punctuation.definition.tag.begin.html" },
+                "2": { "name": "entity.name.tag.html" },
+                "3": { "name": "punctuation.definition.tag.end.html" }
+            },
+            "endCaptures": {
+                "1": { "name": "punctuation.definition.tag.begin.html" },
+                "2": { "name": "entity.name.tag.html" },
+                "3": { "name": "punctuation.definition.tag.end.html" }
+            },
+            "contentName": "meta.embedded.block.python",
+            "patterns": [{ "include": "source.python" }]
+        }
+    }
+}

@@ -1,0 +1,185 @@
+from collections.abc import (
+    Iterator,
+    Sequence,
+)
+from typing import (
+    Any,
+    Literal,
+    Self,
+    overload,
+)
+
+import numpy as np
+from numpy import typing as npt
+from pandas.core.indexes.base import Index
+
+from pandas._typing import (
+    AnyArrayLikeInt,
+    ArrayLike,
+    AstypeArg,
+    AxisInt,
+    Dtype,
+    InterpolateOptions,
+    ListLike,
+    Renamer,
+    Scalar,
+    ScalarIndexer,
+    SequenceIndexer,
+    TakeIndexer,
+    np_1darray,
+    np_1darray_bool,
+    np_1darray_intp,
+    np_ndarray,
+)
+
+from pandas.core.dtypes.dtypes import ExtensionDtype as ExtensionDtype
+
+class ExtensionArray:
+    def __array_ufunc__(
+        self, ufunc: np.ufunc, method: str, *inputs: Any, **kwargs: Any
+    ) -> Any: ...
+    @overload
+    def __getitem__(self, item: ScalarIndexer, /) -> Any: ...
+    @overload
+    def __getitem__(self, item: SequenceIndexer, /) -> Self: ...
+    def __setitem__(self, key: int | slice | np_ndarray, value: Any, /) -> None: ...
+    def __len__(self) -> int: ...
+    def __iter__(self) -> Iterator[Any]: ...
+    def __contains__(self, item: object, /) -> bool | np.bool_: ...
+    def to_numpy(
+        self,
+        dtype: npt.DTypeLike | None = ...,
+        copy: bool = False,
+        na_value: Scalar = ...,
+    ) -> np_1darray: ...
+    @property
+    def dtype(self) -> ExtensionDtype: ...
+    @property
+    def shape(self) -> tuple[int]: ...
+    @property
+    def size(self) -> int: ...
+    @property
+    def ndim(self) -> int: ...
+    @property
+    def nbytes(self) -> int: ...
+    @overload
+    def astype(self, dtype: np.dtype, copy: bool = True) -> np_1darray: ...
+    @overload
+    def astype(self, dtype: ExtensionDtype, copy: bool = True) -> ExtensionArray: ...
+    @overload
+    def astype(self, dtype: AstypeArg, copy: bool = True) -> ArrayLike: ...
+    def isna(self) -> np_1darray_bool: ...
+    def argsort(
+        self, *, ascending: bool = ..., kind: str = ..., **kwargs: Any
+    ) -> np_1darray: ...
+    def fillna(
+        self, value: object | ArrayLike, limit: int | None = None, copy: bool = True
+    ) -> Self: ...
+    def dropna(self) -> Self: ...
+    def shift(self, periods: int = 1, fill_value: object | None = None) -> Self: ...
+    def unique(self) -> Self: ...
+    @overload
+    def searchsorted(
+        self,
+        value: ListLike,
+        side: Literal["left", "right"] = "left",
+        sorter: ListLike | None = None,
+    ) -> np_1darray_intp: ...
+    @overload
+    def searchsorted(
+        self,
+        value: Scalar,
+        side: Literal["left", "right"] = "left",
+        sorter: ListLike | None = None,
+    ) -> np.intp: ...
+    def factorize(self, use_na_sentinel: bool = True) -> tuple[np_1darray, Self]: ...
+    def repeat(
+        self,
+        repeats: int | AnyArrayLikeInt | Sequence[int],
+        axis: AxisInt | None = None,
+    ) -> Self:
+        """
+Repeat elements of an ExtensionArray.
+
+Returns a new ExtensionArray where each element of the current ExtensionArray
+is repeated consecutively a given number of times.
+
+Parameters
+----------
+repeats : int or array of ints
+    The number of repetitions for each element. This should be a
+    non-negative integer. Repeating 0 times will return an empty
+    ExtensionArray.
+axis : None
+    Must be ``None``. Has no effect but is accepted for compatibility
+    with numpy.
+
+Returns
+-------
+ExtensionArray
+    Newly created ExtensionArray with repeated elements.
+
+See Also
+--------
+Series.repeat : Equivalent function for Series.
+Index.repeat : Equivalent function for Index.
+numpy.repeat : Similar method for :class:`numpy.ndarray`.
+ExtensionArray.take : Take arbitrary positions.
+
+Examples
+--------
+>>> cat = pd.Categorical(["a", "b", "c"])
+>>> cat
+['a', 'b', 'c']
+Categories (3, str): ['a', 'b', 'c']
+>>> cat.repeat(2)
+['a', 'a', 'b', 'b', 'c', 'c']
+Categories (3, str): ['a', 'b', 'c']
+>>> cat.repeat([1, 2, 3])
+['a', 'b', 'b', 'c', 'c', 'c']
+Categories (3, str): ['a', 'b', 'c']
+        """
+        pass
+    def take(
+        self,
+        indexer: TakeIndexer,
+        *,
+        allow_fill: bool = False,
+        fill_value: Any = None,
+    ) -> Self: ...
+    def copy(self) -> Self: ...
+    @overload
+    def view(self, dtype: None = None) -> Self: ...
+    @overload
+    def view(self, dtype: Dtype) -> ArrayLike: ...
+    def ravel(self, order: Literal["C", "F", "A", "K"] | None = "C") -> Self: ...
+    def tolist(self) -> list[Any]: ...
+    def _reduce(
+        self, name: str, *, skipna: bool = True, keepdims: bool = False, **kwargs: Any
+    ) -> object: ...
+    def _accumulate(
+        self,
+        name: Literal["cummin", "cummax", "cumsum", "cumprod"],
+        *,
+        skipna: bool = True,
+        **kwargs: Any,
+    ) -> Self: ...
+    def map(
+        self, mapper: Renamer, na_action: Literal["ignore"] | None = None
+    ) -> Self: ...
+    def interpolate(
+        self,
+        *,
+        method: InterpolateOptions,
+        axis: int,
+        index: Index,
+        limit: int | None,
+        limit_direction: Literal["forward", "backward", "both"],
+        limit_area: Literal["inside", "outside"] | None,
+        copy: bool,
+        **kwargs: Any,
+    ) -> ExtensionArray: ...
+
+class ExtensionArraySupportsAnyAll(ExtensionArray):
+    def any(self, *, skipna: bool = True) -> bool: ...
+    def all(self, *, skipna: bool = True) -> bool: ...
